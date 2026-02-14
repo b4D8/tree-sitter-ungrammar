@@ -1,0 +1,23 @@
+/// ungrammar for ungrammar (extended)
+///
+///   'ident'   -- keyword or punct token
+///   '#ident'  -- generic token
+///   '@ident'  -- literal token
+
+Grammar =
+  Node*
+
+Node =
+  name:'ident' '=' Rule
+
+Rule =
+  'ident'                // node reference
+  | 'token_ident'          // keyword or punct token
+| '#generic_ident'       // generic token
+| '@literal_ident'       // literal token
+| Rule*                  // concatenation
+| Rule ('|' Rule)*       // alternation
+| Rule '?'               // zero or one
+| Rule '*'               // zero or more
+| '(' Rule ')'           // grouping
+| label:'ident' ':' Rule // labeled rule
