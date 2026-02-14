@@ -1,6 +1,5 @@
-Cargo.lock
-package-lock.json
-/build
-/node_modules
-/examples/*/
-/target
+/src/
+/node_modules/
+/build/
+/target/
+/.direnv/

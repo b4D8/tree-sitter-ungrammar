@@ -8,6 +8,10 @@
 
 (token) @string
 
+(generic_token) @type
+
+(literal_token) @string.special
+
 [
   "="
   "|"
@@ -18,13 +22,9 @@
   "?"
 ] @operator.repeat
 
-[
-  ":"
-] @punctuation.delimiter
+":" @punctuation.delimiter
 
 [
   "("
   ")"
 ] @punctuation.bracket
-
-(ERROR) @error

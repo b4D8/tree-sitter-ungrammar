@@ -224,3 +224,145 @@ Expr =
 			(label_name)
 			(node_rule
 			  (identifier))))))))
+
+
+
+====================
+Test generic tokens
+====================
+
+Name =
+  '#ident' | 'self'
+
+NameRef =
+  '#ident' | '@int_number' | 'self' | 'super' | 'crate' | 'Self'
+
+Lifetime =
+  '#lifetime_ident'
+
+---
+
+(grammar
+  (node
+	(definition)
+	(rule
+	  (alternation
+		(sequence
+		  (generic_token))
+		(sequence
+		  (token
+			(token_identifier))))))
+  (node
+	(definition)
+	(rule
+	  (alternation
+		(sequence
+		  (generic_token))
+		(sequence
+		  (literal_token))
+		(sequence
+		  (token
+			(token_identifier)))
+		(sequence
+		  (token
+			(token_identifier)))
+		(sequence
+		  (token
+			(token_identifier)))
+		(sequence
+		  (token
+			(token_identifier))))))
+  (node
+	(definition)
+	(rule
+	  (alternation
+		(sequence
+		  (generic_token))))))
+
+
+
+==================================
+Test hash/at as regular token chars
+==================================
+
+Attr =
+  '#' '!'? '[' Meta ']'
+
+IdentPat =
+  'ref'? 'mut'? Name ('@' Pat)?
+
+---
+
+(grammar
+  (node
+	(definition)
+	(rule
+	  (alternation
+		(sequence
+		  (token
+			(token_identifier))
+		  (optional
+			(token
+			  (token_identifier)))
+		  (token
+			(token_identifier))
+		  (node_rule
+			(identifier))
+		  (token
+			(token_identifier))))))
+  (node
+	(definition)
+	(rule
+	  (alternation
+		(sequence
+		  (optional
+			(token
+			  (token_identifier)))
+		  (optional
+			(token
+			  (token_identifier)))
+		  (node_rule
+			(identifier))
+		  (optional
+			(rule
+			  (alternation
+				(sequence
+				  (token
+					(token_identifier))
+				  (node_rule
+					(identifier)))))))))))
+
+
+
+================================
+Test all three token types mixed
+================================
+
+FnDef =
+  'fn' '#ident' '(' ParamList? ')' ('->' '@string')?
+
+---
+
+(grammar
+  (node
+	(definition)
+	(rule
+	  (alternation
+		(sequence
+		  (token
+			(token_identifier))
+		  (generic_token)
+		  (token
+			(token_identifier))
+		  (optional
+			(node_rule
+			  (identifier)))
+		  (token
+			(token_identifier))
+		  (optional
+			(rule
+			  (alternation
+				(sequence
+				  (token
+					(token_identifier))
+				  (literal_token))))))))))
