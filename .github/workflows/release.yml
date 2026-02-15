@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+
+      - name: Check version sync
+        run: |
+          TS_VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' tree-sitter.json | head -1)
+          PKG_VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' package.json | head -1)
+          if [ "$TS_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Version mismatch: tree-sitter.json ($TS_VERSION) != package.json ($PKG_VERSION)"
+            exit 1
+          fi
+          echo "Version: $TS_VERSION"
+
+      - name: Test
+        run: nix develop -c just test
+
+      # re-generate with ABI 14 (needed by zed-ungrammar)
+      - name: Generate parser (ABI 14)
+        run: nix develop -c just build --abi=14
+      - name: Push to release branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B release
+          git add -f src/
+          git commit -m "chore: generate parser from $(git rev-parse --short main)"
+          git push -f origin release
+      - name: Tag release
+        run: |
+          VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' tree-sitter.json | head -1)
+          git tag -f "v${VERSION}"
+          git push -f origin "v${VERSION}"

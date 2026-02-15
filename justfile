@@ -1,6 +1,6 @@
 # Generate the parser from grammar.js
-build:
-    tree-sitter generate
+build *args='':
+    tree-sitter generate {{ args }}
 
 # Run tree-sitter tests
 test: build

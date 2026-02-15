@@ -23,6 +23,7 @@
         devShells.default = pkgs.mkShell {
           packages = [
             pkgs.tree-sitter
+            pkgs.nodejs_latest
             pkgs.just
           ];
         };
